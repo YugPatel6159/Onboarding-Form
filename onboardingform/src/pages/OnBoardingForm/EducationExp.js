@@ -19,6 +19,7 @@ import { makeStyles } from "@mui/styles";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -54,12 +55,17 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
     "Mechanical",
     "Electrical",
   ];
-  const validationSchema = Yup.object({
-    educationType: Yup.string().required("Required"),
-    instituteName: Yup.string().required("Required"),
-    course: Yup.string().required("Required"),
-    cgpa: Yup.string().required("Required"),
-    passYear: Yup.string().required("Required"),
+  const validationSchema = Yup.object().shape({
+    education: Yup.array().of(
+      Yup.object().shape({
+        educationType: Yup.string().required("Required"),
+        instituteName: Yup.string().required("Required"),
+        course: Yup.string().required("Required"),
+        cgpa: Yup.string().required("Required"),
+        passYear: Yup.string().required("Required"),
+      })
+    ),
+    
     totalExperience: Yup.string().required("Required"),
     company: Yup.string().required("Required"),
     designation: Yup.string().required("Required"),
@@ -74,11 +80,15 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
 
   const formik = useFormik({
     initialValues: {
-      educationType: "",
-      instituteName: "",
-      course: "",
-      cgpa: "",
-      passYear: "",
+      education: [
+        {
+          educationType: "",
+          instituteName: "",
+          course: "",
+          cgpa: "",
+          passYear: "",
+        },
+      ],
       totalExperience: "",
       company: "",
       designation: "",
@@ -94,10 +104,36 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
       if (values) {
         handleNext();
       }
-      console.log(values);
+      // console.log(values);
     },
   });
-  console.log(formik.values.companyPresent, "formik.values");
+  // console.log(formik.values.education[0].educationType, "institute name");
+
+  // console.log(formik.values.companyPresent, "formik.values");
+  const AddFields = () => {
+    formik.setValues({
+      ...formik.values,
+      education: [
+        ...formik.values.education,
+        {
+          educationType: "",
+          instituteName: "",
+          course: "",
+          cgpa: "",
+          passYear: "",
+        },
+      ],
+    });
+  };
+
+  const deleteField = (index) => {
+    const education = [...formik.values.education];
+    education.splice(index, 1);
+    formik.setValues({
+      ...formik.values,
+      education,
+    });
+  };
   return (
     <Paper
       elevation={4}
@@ -121,7 +157,7 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
             </Typography>
             <Button
               variant="contained"
-              onClick={() => setEducationCount(educationCount + 1)}
+              onClick={AddFields}
               sx={{ backgroundColor: "orange", color: "white" }}
             >
               <AddIcon /> Add Education
@@ -129,165 +165,207 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
           </Stack>
           <hr />
         </Box>
-        {[...Array(educationCount)].map((item, index) => (
-          <Box
-            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
-          >
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <Box>
-                  <FormControl fullWidth>
-                    <InputLabel id="educationType" sx={{ marginTop: "10px" }}>
-                      Education Type
-                    </InputLabel>
-                    <Select
-                      labelId="educationType"
-                      id="educationType"
-                      value={formik.values.educationType}
-                      name="educationType"
-                      onBlur={formik.handleBlur}
-                      label="educationType"
-                      onChange={(event) =>
-                        formik.setFieldValue(
-                          "educationType",
-                          event.target.value
-                        )
-                      }
-                      sx={{ height: "40px", marginTop: "10px" }}
-                    >
-                      {EducationType.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  {formik.errors.educationType &&
-                    formik.touched.educationType && (
-                      <Typography variant="caption" color="orange">
-                        {formik.errors.educationType}
-                      </Typography>
-                    )}
-                </Box>
+        {formik.values.education && formik.values.education.length>0 && formik.values.education.map((item, index) => {
+          // console.log(formik.values.education, "sef");
+          return (
+            <Box
+              key={index}
+              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+            >
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <Box>
+                    <FormControl fullWidth>
+                      <InputLabel
+                        id={`educationType-${index}`}
+                        sx={{ marginTop: "10px" }}
+                      >
+                        Education Type
+                      </InputLabel>
+                      <Select
+                        labelId={`educationType-${index}`}
+                        name={`education[${index}].educationType`}
+                        onBlur={formik.handleBlur}
+                        label="Education Type"
+                        value={
+                          formik.values.education[index]?.educationType || ""
+                        }
+                        onChange={(event) =>
+                          formik.setFieldValue(
+                            `education[${index}].educationType`,
+                            event.target.value
+                          )
+                        }
+                        sx={{ height: "40px", marginTop: "10px" }}
+                      >
+                        {EducationType.map((item, i) => (
+                          <MenuItem key={i} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {formik.errors.education &&
+                      formik.errors.education[index] &&
+                      formik.errors.education[index].educationType &&
+                      formik.touched.education &&
+                      formik.touched.education[index] &&
+                      formik.touched.education[index].educationType && (
+                        <Typography variant="caption" color="orange">
+                          {formik.errors.education[index].educationType}
+                        </Typography>
+                      )}
+                  </Box>
+                </Grid>
+
+                <Grid item xs={4}>
+                  <Box>
+                    <FormControl fullWidth>
+                      <InputLabel id="instituteName" sx={{ marginTop: "10px" }}>
+                        Institute Name
+                      </InputLabel>
+                      <Select
+                        labelId="instituteName"
+                        id={`education[${index}].instituteName`}
+                        value={
+                          formik.values.education[index].instituteName || ""
+                        }
+                        name={`education[${index}].instituteName`}
+                        onBlur={formik.handleBlur}
+                        label="Institute Name"
+                        onChange={(event) =>
+                          formik.setFieldValue(
+                            `education[${index}].instituteName`,
+                            event.target.value
+                          )
+                        }
+                        sx={{ height: "40px", marginTop: "10px" }}
+                      >
+                        {InstituteName.map((item, i2) => (
+                          <MenuItem key={i2} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {formik.errors.education &&
+                      formik.errors.education[index] &&
+                      formik.errors.education[index].instituteName &&
+                      formik.touched.education &&
+                      formik.touched.education[index] &&
+                      formik.touched.education[index].instituteName && (
+                        <Typography variant="caption" color="orange">
+                          {formik.errors.education[index].instituteName}
+                        </Typography>
+                      )}
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box>
+                    <FormControl fullWidth>
+                      <InputLabel id="course" sx={{ marginTop: "10px" }}>
+                        Course
+                      </InputLabel>
+                      <Select
+                        labelId="course"
+                        value={formik.values.education[index].course || ""}
+                        name={`education[${index}].course`}
+                        onBlur={formik.handleBlur}
+                        onChange={(event) => {
+                          formik.setFieldValue(
+                            `education[${index}].course`,
+                            event.target.value
+                          );
+                        }}
+                        label="course"
+                        sx={{ height: "40px", marginTop: "10px" }}
+                      >
+                        {course.map((item, i3) => (
+                          <MenuItem key={i3} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {formik.errors.education &&
+                      formik.errors.education[index] &&
+                      formik.errors.education[index].course &&
+                      formik.touched.education &&
+                      formik.touched.education[index] &&
+                      formik.touched.education[index].course && (
+                        <Typography variant="caption" color="orange">
+                          {formik.errors.education[index].course}
+                        </Typography>
+                      )}
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    className={classes.textField}
+                    // id={`item.cgpa`}
+                    name={`education[${index}].cgpa`}
+                    variant="outlined"
+                    sx={{ marginTop: "10px", width: "100%" }}
+                    label="CGPA"
+                    type="text"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    // value={formik.values.education[index].cgpa || ""}
+                    // value={formik.values.education[index].cgpa}
+                    helperText={
+                      formik.errors.education &&
+                    formik.errors.education[index] &&
+                    formik.errors.education[index].cgpa &&
+                    formik.touched.education &&
+                    formik.touched.education[index] &&
+                    formik.touched.education[index].cgpa && (
+                        <Typography variant="caption" color="orange">
+                          {formik.errors.education[index].cgpa}
+                        </Typography>
+                      )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <TextField
+                    fullWidth
+                    className={classes.textField}
+                    // id={`item.cgpa`}
+                    name={`education[${index}].passYear`}
+                    variant="outlined"
+                    sx={{ marginTop: "10px", width: "100%" }}
+                    label="Date of Passing"
+                    type="date"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    // value={formik.values.education[index].passYear || ""}
+                    // value={formik.values.education[index].passYear}
+                    helperText={
+                      formik.errors.education &&
+                      formik.errors.education[index] &&
+                      formik.errors.education[index].course &&
+                      formik.touched.education &&
+                      formik.touched.education[index] &&
+                      formik.touched.education[index].course&& (
+                        <Typography variant="caption" color="orange">
+                          {formik.errors.education[index]?.passYear}
+                        </Typography>
+                      )
+                    }
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <Box>
-                  <FormControl fullWidth>
-                    <InputLabel id="instituteName" sx={{ marginTop: "10px" }}>
-                      Institute Name
-                    </InputLabel>
-                    <Select
-                      labelId="instituteName"
-                      id="instituteName"
-                      value={formik.values.instituteName}
-                      name="instituteName"
-                      onBlur={formik.handleBlur}
-                      label="instituteName"
-                      onChange={(event) =>
-                        formik.setFieldValue(
-                          "instituteName",
-                          event.target.value
-                        )
-                      }
-                      sx={{ height: "40px", marginTop: "10px" }}
-                    >
-                      {InstituteName.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  {formik.errors.instituteName &&
-                    formik.touched.instituteName && (
-                      <Typography variant="caption" color="orange">
-                        {formik.errors.instituteName}
-                      </Typography>
-                    )}
-                </Box>
-              </Grid>
-              <Grid item xs={4}>
-                <Box>
-                  <FormControl fullWidth>
-                    <InputLabel id="course" sx={{ marginTop: "10px" }}>
-                      Course
-                    </InputLabel>
-                    <Select
-                      labelId="course"
-                      id="course"
-                      value={formik.values.course}
-                      name="course"
-                      onBlur={formik.handleBlur}
-                      label="course"
-                      onChange={(event) =>
-                        formik.setFieldValue("course", event.target.value)
-                      }
-                      sx={{ height: "40px", marginTop: "10px" }}
-                    >
-                      {course.map((item, index) => (
-                        <MenuItem key={index} value={item}>
-                          {item}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  {formik.errors.course && formik.touched.course && (
-                    <Typography variant="caption" color="orange">
-                      {formik.errors.course}
-                    </Typography>
-                  )}
-                </Box>
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  className={classes.textField}
-                  id="cgpa"
-                  type="text"
-                  name="cgpa"
-                  label="cgpa"
-                  variant="outlined"
-                  sx={{ marginTop: "10px", width: "100%" }}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.cgpa}
-                  helperText={
-                    formik.errors.cgpa &&
-                    formik.touched.cgpa && (
-                      <Typography variant="caption" color="orange">
-                        {formik.errors.cgpa}
-                      </Typography>
-                    )
-                  }
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  className={classes.textField}
-                  id="passYear"
-                  type="date"
-                  name="passYear"
-                  label="Passing Year"
-                  variant="outlined"
-                  sx={{ marginTop: "10px", width: "100%" }}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.passYear}
-                  helperText={
-                    formik.errors.passYear &&
-                    formik.touched.passYear && (
-                      <Typography variant="caption" color="orange">
-                        {formik.errors.passYear}
-                      </Typography>
-                    )
-                  }
-                />
-              </Grid>
-            </Grid>
-          </Box>
-        ))}
+              <ClearIcon
+                sx={{ cursor: "pointer", '&:hover': { color: 'orange' }}}
+                onClick={() => deleteField(index)}
+              />
+            </Box>
+          );
+        })}
         <Box>
           <Stack>
             <Typography
@@ -399,30 +477,29 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
           </Grid>
         </Box>
         <Box sx={{ marginTop: "10px" }}>
-        <Grid item xs={4}>
-              <FormControl component="fieldset">
-                <FormGroup aria-label="position" row>
-                  <FormControlLabel
-                    value="Mark if the company is present "
-                    control={<Checkbox />}
-                    label="Mark if the company is present "
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    checked={formik.values.companyPresent}
-                    name="companyPresent"
-                    sx={{ marginTop: "10px", width: "100%" }}
-                  />
-                </FormGroup>
-              </FormControl>
-              {formik.touched.companyPresent &&
-                formik.errors.companyPresent && (
-                  <Typography variant="caption" color="orange">
-                    {formik.errors.companyPresent}
-                  </Typography>
-                )}
-            </Grid>
-          <Grid container spacing={2}>
           <Grid item xs={4}>
+            <FormControl component="fieldset">
+              <FormGroup aria-label="position" row>
+                <FormControlLabel
+                  value="Mark if the company is present "
+                  control={<Checkbox />}
+                  label="Mark if the company is present "
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  checked={formik.values.companyPresent}
+                  name="companyPresent"
+                  sx={{ marginTop: "10px", width: "100%" }}
+                />
+              </FormGroup>
+            </FormControl>
+            {formik.touched.companyPresent && formik.errors.companyPresent && (
+              <Typography variant="caption" color="orange">
+                {formik.errors.companyPresent}
+              </Typography>
+            )}
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
               <TextField
                 className={classes.textField}
                 id="fromDate"
@@ -455,8 +532,8 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
                 name="toDate"
                 label="To Date"
                 variant="outlined"
-                style={!formik.values.companyPresent ? {} : {display: 'none'}}
-                sx={{ marginTop: "10px",}}
+                style={!formik.values.companyPresent ? {} : { display: "none" }}
+                sx={{ marginTop: "10px" }}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -497,8 +574,7 @@ function EducationExp({ formDataChange, handleNext, handleBack }) {
                 }
               />
             </Grid>
-            </Grid>
-          
+          </Grid>
         </Box>
 
         <Stack
