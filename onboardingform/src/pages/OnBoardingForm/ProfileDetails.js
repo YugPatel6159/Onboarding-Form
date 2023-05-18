@@ -20,7 +20,8 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
-import { ProfileValidationSchema } from "./ProfileValidationSchema";
+import { ProfileValidationSchema } from "../../validation/ProfileValidationSchema";
+// import { ProfileValidationSchema } from "../../validation/ProfileValidationSchema";
 const useStyles = makeStyles((theme) => ({
   textField: {
     "& .MuiInputBase-input": {
