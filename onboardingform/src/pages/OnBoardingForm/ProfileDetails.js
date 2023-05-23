@@ -40,10 +40,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProfileDetails({formDataChange,handleNext,profileDetailsData}) {
+function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileData, setProfileData}) {
   const classes = useStyles();
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [profileDetails,setProfileDetails] = useState(null);
+  const [profilePhoto, setProfilePhoto] = useState();
 
   const initialValues = {
     firstName: "",
@@ -60,7 +59,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData}) {
     ifscCode: "",
     branch: "",
     profilePhoto: null,
-    altMobieNumber: "",
+    altMobileNumber: "",
     linkedInLink: "",
     githubLink: "",
   };
@@ -69,9 +68,10 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData}) {
     initialValues: initialValues,
     validationSchema: ProfileValidationSchema,
     onSubmit: (values) => {
-      formDataChange(values);
       // setProfileDetails(values);
       if(values){
+        formDataChange(values);
+        setProfileData({...values});
         handleNext();
       }
       console.log(values);
@@ -88,13 +88,14 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData}) {
 
   useEffect(() => {
     // console.log(profileDetails,"profileDetails");
-    if(profileDetailsData){
-      formik.setValues(profileDetailsData);
+    if(profileData){
+      formik.setValues(profileData);
     }
-    if(profileDetailsData.profilePhoto){
-      setProfilePhoto(URL.createObjectURL(profileDetailsData.profilePhoto));
+    if(profileData?.profilePhoto){
+      setProfilePhoto(URL.createObjectURL(profileData?.profilePhoto));
     }
-  },[])
+  },[profileData])
+  
 
   const bloodGroup = ["A", "B", "AB", "O"];
   const maritialStatus = ["Single", "Married", "Divorced", "Widowed"];
@@ -338,17 +339,17 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData}) {
             <Grid item xs={3}>
               <TextField
                 className={classes.textField}
-                id="altMobieNumber"
+                id="altMobileNumber"
                 type="number"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                name="altMobieNumber"
-                value={formik.values.altMobieNumber}
+                name="altMobileNumber"
+                value={formik.values.altMobileNumber}
                 helperText={
-                  formik.errors.altMobieNumber &&
-                  formik.touched.altMobieNumber && (
+                  formik.errors.altMobileNumber &&
+                  formik.touched.altMobileNumber && (
                     <Typography variant="caption" color="orange">
-                      {formik.errors.altMobieNumber}
+                      {formik.errors.altMobileNumber}
                     </Typography>
                   )
                 }

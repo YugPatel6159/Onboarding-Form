@@ -59,6 +59,7 @@ export default function FormStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [formData,setFormData]=React.useState({})
+  const [profileData, setProfileData] = React.useState(null)
   const [educationData, setEducationData]= React.useState(null)
   const [documentData, setDocumentData] = React.useState(null)
   const classes = useStyles();
@@ -80,6 +81,7 @@ export default function FormStepper() {
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+
   };
 
   const handleReset = () => {
@@ -87,7 +89,6 @@ export default function FormStepper() {
   };
 
   const formDataChange=(Data)=>{
-    console.log(Data,'Data from stepper')
     setFormData({...Data})
   }
 
@@ -98,7 +99,6 @@ export default function FormStepper() {
   const handleEdit=(num)=>{
     setActiveStep(num)
   }
-  console.log(formData,'FormData from stepper')
   return (
     <Box sx={{ display: 'flex',justifyContent: 'center', alignItems: 'center'  }}>
     <Box sx={{ width: '80%', marginTop: '30px' }}>
@@ -128,10 +128,10 @@ export default function FormStepper() {
         </React.Fragment>
       ) : (
         <React.Fragment>
-         {activeStep === 0 && <ProfileDetails  formDataChange={formDataChange} handleNext={handleNext} profileDetailsData={formData} />}
+         {activeStep === 0 && <ProfileDetails  formDataChange={formDataChange} handleNext={handleNext} profileDetailsData={formData} profileData={profileData} setProfileData={setProfileData} />}
          {activeStep === 1 && <EducationExp formDataChange={formDataChange} educationDataChange={educationDataChange} handleNext={handleNext} handleBack={handleBack} educationData={educationData} setEducationData={setEducationData} />}
          {activeStep === 2 && <DocumentForm handleBack={handleBack} handleNext={handleNext} formDataChange={formDataChange} documentData={documentData} setDocumentData = {setDocumentData} />}
-         {activeStep === 3 && <ReviewInformation profileDetailsData={formData}  handleBack={handleBack} educationData={educationData} documentData={documentData} handleEdit={handleEdit} handleNext={handleNext} />}
+         {activeStep === 3 && <ReviewInformation profileData={profileData}  handleBack={handleBack} educationData={educationData} documentData={documentData} handleEdit={handleEdit} handleNext={handleNext} />}
           {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button

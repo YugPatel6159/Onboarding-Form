@@ -14,7 +14,7 @@ import * as Yup from "yup";
     ifscCode:Yup.string().required("Required"),
     branch:Yup.string().required("Required"),
     profilePhoto:Yup.mixed().required("Required"),
-    altMobieNumber:Yup.number().typeError("Invalid phone number"),
+    altMobileNumber:Yup.number().typeError("Invalid phone number"),
     linkedInLink:Yup.string().required("Required"),
     githubLink:Yup.string().required("Required"),
  })

@@ -19,7 +19,7 @@ import { makeStyles } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
 
-import Chips from "./Chips";
+import Chips from "../../components/Chips";
 import { documentValidationSchema } from "../../validation/documentValidationSchema";
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -143,45 +143,30 @@ const DocumentForm = ({
           certificate: [],
         },
       ],
-      latestExperienceLetter: [],
       latestRelievingLetter: [],
+      latestExperienceLetter: [],
       salarySlip: [],
       uploadForm16: [],
       passportPhoto: [],
     },
     validationSchema: documentValidationSchema,
     onSubmit: (values) => {
-      setDocumentData(values);
       handleNext();
     },
   });
+
   useEffect(() => {
-    if (formik.values.sameAddress) {
-      formik.setFieldValue("perStreetLine1", formik.values.streetLine1);
-      formik.setFieldValue("perStreetLine2", formik.values.streetLine2);
-      formik.setFieldValue("perCountry", formik.values.country);
-      formik.setFieldValue("perState", formik.values.state);
-      formik.setFieldValue("perCity", formik.values.city);
-      formik.setFieldValue("perArea", formik.values.area);
-      formik.setFieldValue("perPostalCode", formik.values.postalCode);
-    } else {
-      formik.setFieldValue("perStreetLine1", "");
-      formik.setFieldValue("perStreetLine2", "");
-      formik.setFieldValue("perCountry", "");
-      formik.setFieldValue("perState", "");
-      formik.setFieldValue("perCity", "");
-      formik.setFieldValue("perArea", "");
-      formik.setFieldValue("perPostalCode", "");
-    }
-  }, [formik.values.sameAddress]);
+    setDocumentData(formik.values);
+    // formik.setValues(documentData);
+  }, [formik.values]);
 
   useEffect(() => {
     if (documentData) {
       formik.setValues(documentData);
     }
   }, []);
+
   const setAadharFiles = (file) => {
-    console.log(file, "files");
     if (formik.values.aadharCardImage.length > 0) {
       formik.setFieldValue("aadharCardImage", [
         ...formik.values.aadharCardImage,
@@ -191,7 +176,7 @@ const DocumentForm = ({
       formik.setFieldValue("aadharCardImage", [...file]);
     }
   };
-  console.log(formik.values);
+
   const handleFileDelete = (index) => {
     const newFiles = formik.values.aadharCardImage.filter(
       (_, i) => i !== index
@@ -237,6 +222,7 @@ const DocumentForm = ({
     const newFiles = formik.values.panCardImages.filter((_, i) => i !== index);
     formik.setFieldValue("panCardImages", [...newFiles]);
   };
+
   const addEducationCertificate = () => {
     const educationCertificate = {
       certificateType: "",
@@ -285,8 +271,29 @@ const DocumentForm = ({
   };
 
   const deletePassportPhoto = (index) => {
-    formik.setFieldValue('passportPhoto',[])
-  }
+    formik.setFieldValue("passportPhoto", []);
+  };
+
+  useEffect(() => {
+    if (formik.values.sameAddress) {
+      formik.setFieldValue("perStreetLine1", formik.values.streetLine1);
+      formik.setFieldValue("perStreetLine2", formik.values.streetLine2);
+      formik.setFieldValue("perCountry", formik.values.country);
+      formik.setFieldValue("perState", formik.values.state);
+      formik.setFieldValue("perCity", formik.values.city);
+      formik.setFieldValue("perArea", formik.values.area);
+      formik.setFieldValue("perPostalCode", formik.values.postalCode);
+    } else {
+      formik.setFieldValue("perStreetLine1", "");
+      formik.setFieldValue("perStreetLine2", "");
+      formik.setFieldValue("perCountry", "");
+      formik.setFieldValue("perState", "");
+      formik.setFieldValue("perCity", "");
+      formik.setFieldValue("perArea", "");
+      formik.setFieldValue("perPostalCode", "");
+    }
+  }, [formik.values.sameAddress]);
+
   return (
     <Paper
       elevation={4}
@@ -328,7 +335,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.aadharNumber &&
                   formik.touched.aadharNumber && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.aadharNumber}
                     </Typography>
                   )
@@ -355,7 +362,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.panNumber &&
                   formik.touched.panNumber && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.panNumber}
                     </Typography>
                   )
@@ -443,7 +450,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.streetLine1 &&
                   formik.touched.streetLine1 && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.streetLine1}
                     </Typography>
                   )
@@ -464,7 +471,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.streetLine2 &&
                   formik.touched.streetLine2 && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.streetLine2}
                     </Typography>
                   )
@@ -483,9 +490,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="Country"
                     value={formik.values.country}
-                    onChange={(event) =>
-                      formik.setFieldValue("country", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     <MenuItem value={countryAddress.country.name}>
@@ -494,7 +499,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.country && formik.touched.education && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.country}
                   </Typography>
                 )}
@@ -512,9 +517,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="State"
                     value={formik.values.state}
-                    onChange={(event) =>
-                      formik.setFieldValue("state", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states &&
@@ -528,7 +531,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.state && formik.touched.state && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.state}
                   </Typography>
                 )}
@@ -546,9 +549,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="City"
                     value={formik.values.city}
-                    onChange={(event) =>
-                      formik.setFieldValue("city", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -564,7 +565,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.city && formik.touched.city && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.city}
                   </Typography>
                 )}
@@ -582,9 +583,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="Area"
                     value={formik.values.area}
-                    onChange={(event) =>
-                      formik.setFieldValue("area", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -601,7 +600,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.area && formik.touched.area && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.area}
                   </Typography>
                 )}
@@ -619,9 +618,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="postalCode"
                     value={formik.values.postalCode}
-                    onChange={(event) =>
-                      formik.setFieldValue("postalCode", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -639,7 +636,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.postalCode && formik.touched.postalCode && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.postalCode}
                   </Typography>
                 )}
@@ -691,7 +688,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.perStreetLine1 &&
                   formik.touched.perStreetLine1 && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.perStreetLine1}
                     </Typography>
                   )
@@ -712,7 +709,7 @@ const DocumentForm = ({
                 helperText={
                   formik.errors.perStreetLine2 &&
                   formik.touched.perStreetLine2 && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.perStreetLine2}
                     </Typography>
                   )
@@ -731,9 +728,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="perCountry"
                     value={formik.values.perCountry}
-                    onChange={(event) =>
-                      formik.setFieldValue("perCountry", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     <MenuItem value={countryAddress.country.name}>
@@ -742,7 +737,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.perCountry && formik.touched.perCountry && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.perCountry}
                   </Typography>
                 )}
@@ -760,9 +755,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="State"
                     value={formik.values.perState}
-                    onChange={(event) =>
-                      formik.setFieldValue("perState", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states &&
@@ -776,7 +769,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.perState && formik.touched.perState && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.perState}
                   </Typography>
                 )}
@@ -794,9 +787,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="City"
                     value={formik.values.perCity}
-                    onChange={(event) =>
-                      formik.setFieldValue("perCity", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -812,7 +803,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.perCity && formik.touched.perCity && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.perCity}
                   </Typography>
                 )}
@@ -830,9 +821,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="Area"
                     value={formik.values.perArea}
-                    onChange={(event) =>
-                      formik.setFieldValue("perArea", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -849,7 +838,7 @@ const DocumentForm = ({
                   </Select>
                 </FormControl>
                 {formik.errors.perArea && formik.touched.perArea && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.perArea}
                   </Typography>
                 )}
@@ -867,9 +856,7 @@ const DocumentForm = ({
                     // onBlur={formik.handleBlur}
                     label="perPostalCode"
                     value={formik.values.perPostalCode}
-                    onChange={(event) =>
-                      formik.setFieldValue("perPostalCode", event.target.value)
-                    }
+                    onChange={formik.handleChange}
                     sx={{ height: "40px", marginTop: "10px" }}
                   >
                     {countryAddress.country.states
@@ -886,11 +873,12 @@ const DocumentForm = ({
                       ))}
                   </Select>
                 </FormControl>
-                {formik.errors.perPostalCode && formik.touched.perPostalCode && (
-                  <Typography variant="caption" color="orange">
-                    {formik.errors.perPostalCode}
-                  </Typography>
-                )}
+                {formik.errors.perPostalCode &&
+                  formik.touched.perPostalCode && (
+                    <Typography variant="caption" color="red">
+                      {formik.errors.perPostalCode}
+                    </Typography>
+                  )}
               </Box>
             </Grid>
           </Grid>
@@ -922,7 +910,7 @@ const DocumentForm = ({
           formik.values.educationCertificate.map((certi, index) => (
             <Box sx={{ marginTop: "20px" }}>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                   <Box>
                     <FormControl fullWidth>
                       <InputLabel
@@ -949,22 +937,27 @@ const DocumentForm = ({
                         sx={{ height: "40px", marginTop: "10px" }}
                       >
                         {educationArray.map((certificateFile, index) => (
-                          <MenuItem key={index} value={certificateFile}>
+                          <MenuItem key={index + 1} value={certificateFile}>
                             {certificateFile}
                           </MenuItem>
                         ))}
                       </Select>
                     </FormControl>
                     {formik.errors.educationCertificate &&
-                        formik.errors.educationCertificate[index] &&
-                        formik.errors.educationCertificate[index].certificateType &&
-                        formik.touched.educationCertificate &&
-                        formik.touched.educationCertificate[index] &&
-                        formik.touched.educationCertificate[index].certificateType && (
-                          <Typography variant="caption" color="orange">
-                            {formik.errors.educationCertificate[index].certificateType}
-                          </Typography>
-                        )}
+                      formik.errors.educationCertificate[index] &&
+                      formik.errors.educationCertificate[index]
+                        .certificateType &&
+                      formik.touched.educationCertificate &&
+                      formik.touched.educationCertificate[index] &&
+                      formik.touched.educationCertificate[index]
+                        .certificateType && (
+                        <Typography variant="caption" color="red">
+                          {
+                            formik.errors.educationCertificate[index]
+                              .certificateType
+                          }
+                        </Typography>
+                      )}
                   </Box>
                 </Grid>
                 {formik.values.educationCertificate[index].certificate.map(
@@ -977,112 +970,125 @@ const DocumentForm = ({
                         onDelete={() =>
                           handleEducationCertificateDelete(certiIndex, index)
                         }
-                        sx={{ marginTop: "10px", backgroundColor: "orange" }}
+                        sx={{
+                          marginTop: "30px",
+                          marginLeft: "10px",
+                          backgroundColor: "orange",
+                        }}
                       />
                     </Stack>
                   )
                 )}
                 {/* <Chips/> */}
-                <Grid item xs={6}>
-                  <Grid item xs={5}>
-                    <TextField
-                      accept="image/*"
-                      inputProps={{
-                        multiple: true,
-                      }}
-                      id={
-                        `formik.values.educationCertificate[${index}].certificateType` +
-                        { index }
-                      }
-                      type="file"
-                      name={
-                        `formik.values.educationCertificate[${index}].certificateType` +
-                        { index }
-                      }
-                      style={{ display: "none" }}
-                      onChange={(e) =>
-                        setEducationCertificate(e.target.files, index)
-                      }
-                      helperText={
-                        formik.errors.educationCertificate &&
-                        formik.errors.educationCertificate[index] &&
-                         formik.errors.educationCertificate[index].certificateType
-                        && formik.touched.educationCertificate &&
-                        formik.touched.educationCertificate[index] &&
-                        formik.touched.education[index].certificateType
-                        && <Typography variant="caption" color={"orange"}>
-                          {formik.errors.educationCertificate[index].certificateType}
+                <Grid item xs={0}>
+                  <TextField
+                    accept="image/*"
+                    inputProps={{
+                      multiple: true,
+                    }}
+                    id={
+                      `formik.values.educationCertificate[${index}].certificateType` +
+                      { index }
+                    }
+                    type="file"
+                    name={
+                      `formik.values.educationCertificate[${index}].certificateType` +
+                      { index }
+                    }
+                    style={{ display: "none" }}
+                    onChange={(e) =>
+                      setEducationCertificate(e.target.files, index)
+                    }
+                    helperText={
+                      formik.errors.educationCertificate &&
+                      formik.errors.educationCertificate[index] &&
+                      formik.errors.educationCertificate[index]
+                        .certificateType &&
+                      formik.touched.educationCertificate &&
+                      formik.touched.educationCertificate[index] &&
+                      formik.touched.education[index].certificateType && (
+                        <Typography variant="caption" color={"orange"}>
+                          {
+                            formik.errors.educationCertificate[index]
+                              .certificateType
+                          }
                         </Typography>
-                      }
-                    />
-                    <label
-                      htmlFor={
-                        `formik.values.educationCertificate[${index}].certificateType` +
-                        { index }
+                      )
+                    }
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <label
+                    htmlFor={
+                      `formik.values.educationCertificate[${index}].certificateType` +
+                      { index }
+                    }
+                  >
+                    <Button
+                      variant="contained"
+                      component="span"
+                      sx={{
+                        backgroundColor: "orange",
+                        color: "white",
+                        marginTop: "10px",
+                      }}
+                      disabled={
+                        !formik.values.educationCertificate[index]
+                          .certificateType
                       }
                     >
-                      <Button
-                        variant="contained"
-                        component="span"
-                        sx={{ backgroundColor: "orange", color: "white" }}
-                      >
-                        Upload 
-                      </Button>
-                    </label>
-                  </Grid>
-
+                      Upload
+                    </Button>
+                  </label>
                 </Grid>
               </Grid>
             </Box>
           ))}
-        <Grid container spacing={2} marginTop={"20px"}>
-        <Grid item xs={6}>
-            <Stack
-              direction="row"
-              spacing={1}
-              display="flex"
-              justifyContent="space-between"
-            >
-              <Typography variant="h6" fontWeight={"bold"}>
-                Passport Photo
-              </Typography>
-              <TextField
-                accept="image/*"
-                inputProps={{
-                  multiple: false,
-                }}
-                id="passportPhoto"
-                type="file"
-                name="passportPhoto"
-                style={{ display: "none" }}
-                onChange={(e) => formik.setFieldValue('passportPhoto', [...e.target.files])}
-              />
-              <Chips
-                files={formik.values.passportPhoto}
-                handleFileDelete={deletePassportPhoto}
-              />
-              <label htmlFor="passportPhoto">
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: "orange", color: "white" }}
-                  component="span"
-                >
-                  Upload
-                </Button>
-              </label>
-            </Stack>
-  
+        <Grid container spacing={2} marginTop={"10px"}>
+          <Grid item xs={3}>
+            <Typography variant="h6" fontWeight={"bold"}>
+              Passport Photo
+            </Typography>
           </Grid>
-          <Grid item xs={6}>
-            <Stack
-              direction="row"
-              spacing={1}
-              display="flex"
-              justifyContent="space-between"
-            >
+          <Grid item xs={0}>
+            <TextField
+              accept="image/*"
+              inputProps={{
+                multiple: false,
+              }}
+              id="passportPhoto"
+              type="file"
+              name="passportPhoto"
+              style={{ display: "none" }}
+              onChange={(e) =>
+                formik.setFieldValue("passportPhoto", [...e.target.files])
+              }
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <Chips
+              files={formik.values.passportPhoto}
+              handleFileDelete={deletePassportPhoto}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <label htmlFor="passportPhoto">
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: "orange", color: "white" }}
+                component="span"
+              >
+                Upload
+              </Button>
+            </label>
+          </Grid>
+          <Grid container spacing={3} marginTop={"10px"}>
+            <Grid item xs={3}>
               <Typography variant="h6" fontWeight={"bold"}>
                 Latest Experience Letter
               </Typography>
+            </Grid>
+            <Grid item xs={0}>
               <TextField
                 accept="image/*"
                 inputProps={{
@@ -1094,10 +1100,14 @@ const DocumentForm = ({
                 style={{ display: "none" }}
                 onChange={(e) => setExperienceLetter(e.target.files)}
               />
+            </Grid>
+            <Grid item xs={3}>
               <Chips
                 files={formik.values.latestExperienceLetter}
                 handleFileDelete={deleteExperienceLetter}
               />
+            </Grid>
+            <Grid item xs={3}>
               <label htmlFor="latestExperienceLetter">
                 <Button
                   variant="contained"
@@ -1107,18 +1117,15 @@ const DocumentForm = ({
                   Upload
                 </Button>
               </label>
-            </Stack>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Stack
-              direction="row"
-              spacing={1}
-              display="flex"
-              justifyContent="space-between"
-            >
+          <Grid container spacing={3} marginTop={"10px"}>
+            <Grid item xs={3}>
               <Typography variant="h6" fontWeight={"bold"}>
                 Latest Relieving Letter
               </Typography>
+            </Grid>
+            <Grid item xs={0}>
               <TextField
                 accept="image/*"
                 inputProps={{
@@ -1130,10 +1137,14 @@ const DocumentForm = ({
                 style={{ display: "none" }}
                 onChange={(e) => setRelievingLetter(e.target.files)}
               />
+            </Grid>
+            <Grid item xs={3}>
               <Chips
                 files={formik.values.latestRelievingLetter}
                 handleFileDelete={deleteRelievingLetter}
               />
+            </Grid>
+            <Grid item xs={3}>
               <label htmlFor="latestRelievingLetter">
                 <Button
                   variant="contained"
@@ -1143,18 +1154,15 @@ const DocumentForm = ({
                   Upload
                 </Button>
               </label>
-            </Stack>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Stack
-              direction="row"
-              spacing={1}
-              display="flex"
-              justifyContent="space-between"
-            >
+          <Grid container spacing={3} marginTop={"10px"}>
+            <Grid item xs={3}>
               <Typography variant="h6" fontWeight={"bold"}>
                 Salary Slip
               </Typography>
+            </Grid>
+            <Grid item xs={0}>
               <TextField
                 accept="image/*"
                 inputProps={{
@@ -1166,10 +1174,14 @@ const DocumentForm = ({
                 style={{ display: "none" }}
                 onChange={(e) => setSalarySlip(e.target.files)}
               />
+            </Grid>
+            <Grid item xs={3}>
               <Chips
                 files={formik.values.salarySlip}
                 handleFileDelete={deleteSalarySlip}
               />
+            </Grid>
+            <Grid item xs={3}>
               <label htmlFor="salarySlip">
                 <Button
                   variant="contained"
@@ -1179,18 +1191,15 @@ const DocumentForm = ({
                   Upload
                 </Button>
               </label>
-            </Stack>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Stack
-              direction="row"
-              spacing={1}
-              display="flex"
-              justifyContent="space-between"
-            >
+          <Grid container spacing={3} marginTop={"10px"}>
+            <Grid item xs={3}>
               <Typography variant="h6" fontWeight={"bold"}>
                 Upload Form 16 of Previous Employer
               </Typography>
+            </Grid>
+            <Grid item xs={0}>
               <TextField
                 accept="image/*"
                 inputProps={{
@@ -1202,10 +1211,14 @@ const DocumentForm = ({
                 style={{ display: "none" }}
                 onChange={(e) => setUploadForm16(e.target.files)}
               />
+            </Grid>
+            <Grid item xs={3}>
               <Chips
                 files={formik.values.uploadForm16}
                 handleFileDelete={deleteUploadForm16}
               />
+            </Grid>
+            <Grid item xs={3}>
               <label htmlFor="uploadForm16">
                 <Button
                   variant="contained"
@@ -1215,7 +1228,7 @@ const DocumentForm = ({
                   Upload
                 </Button>
               </label>
-            </Stack>
+            </Grid>
           </Grid>
         </Grid>
         <Stack
@@ -1252,5 +1265,4 @@ const DocumentForm = ({
     </Paper>
   );
 };
-
 export default DocumentForm;
