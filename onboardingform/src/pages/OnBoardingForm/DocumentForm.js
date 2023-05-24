@@ -907,7 +907,7 @@ const DocumentForm = ({
         </Box>
         {formik.values.educationCertificate &&
           formik.values.educationCertificate.length > 0 &&
-          formik.values.educationCertificate.map((certi, index) => (
+          formik.values.educationCertificate.map((_, index) => (
             <Box sx={{ marginTop: "20px" }}>
               <Grid container spacing={2}>
                 <Grid item xs={4}>
@@ -1006,7 +1006,7 @@ const DocumentForm = ({
                         .certificateType &&
                       formik.touched.educationCertificate &&
                       formik.touched.educationCertificate[index] &&
-                      formik.touched.education[index].certificateType && (
+                      formik.touched.educationCertificate[index].certificateType && (
                         <Typography variant="caption" color={"orange"}>
                           {
                             formik.errors.educationCertificate[index]
@@ -1049,6 +1049,15 @@ const DocumentForm = ({
             <Typography variant="h6" fontWeight={"bold"}>
               Passport Photo
             </Typography>
+            {
+              formik.errors.passportPhoto &&
+              formik.submitCount > 0 &&
+              (
+                <Typography variant="caption" color="red">
+                  {formik.errors.passportPhoto}
+                </Typography>
+              )
+            }
           </Grid>
           <Grid item xs={0}>
             <TextField
@@ -1087,6 +1096,15 @@ const DocumentForm = ({
               <Typography variant="h6" fontWeight={"bold"}>
                 Latest Experience Letter
               </Typography>
+              {
+                formik.errors.latestExperienceLetter &&
+                formik.submitCount > 0 &&
+                (
+                  <Typography variant="caption" color="red">
+                    {formik.errors.latestExperienceLetter}
+                  </Typography>
+                )
+              }
             </Grid>
             <Grid item xs={0}>
               <TextField
@@ -1124,6 +1142,17 @@ const DocumentForm = ({
               <Typography variant="h6" fontWeight={"bold"}>
                 Latest Relieving Letter
               </Typography>
+              {
+                
+                formik.errors.latestRelievingLetter &&
+                formik.submitCount > 0 &&
+                (
+                  
+                  <Typography variant="caption" color="red">
+                    {formik.errors.latestRelievingLetter}
+                  </Typography>
+                )
+              }
             </Grid>
             <Grid item xs={0}>
               <TextField
@@ -1161,6 +1190,15 @@ const DocumentForm = ({
               <Typography variant="h6" fontWeight={"bold"}>
                 Salary Slip
               </Typography>
+              {
+                formik.errors.salarySlip &&
+                formik.submitCount > 0 &&
+                (
+                  <Typography variant="caption" color="red">
+                    {formik.errors.salarySlip}
+                  </Typography>
+                )
+              }
             </Grid>
             <Grid item xs={0}>
               <TextField
@@ -1198,6 +1236,15 @@ const DocumentForm = ({
               <Typography variant="h6" fontWeight={"bold"}>
                 Upload Form 16 of Previous Employer
               </Typography>
+              {
+                formik.errors.uploadForm16 &&
+                formik.submitCount > 0 &&
+                (
+                  <Typography variant="caption" color="red">
+                    {formik.errors.uploadForm16}
+                  </Typography>
+                )
+              }
             </Grid>
             <Grid item xs={0}>
               <TextField
@@ -1252,7 +1299,7 @@ const DocumentForm = ({
           <Button
             variant="contained"
             type="submit"
-            disabled={!formik.isValid || !formik.dirty}
+            // disabled={!formik.isValid || !formik.dirty}
             sx={{
               backgroundColor: "orange",
               color: "white",

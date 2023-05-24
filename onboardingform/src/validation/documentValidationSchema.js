@@ -42,22 +42,22 @@ export const documentValidationSchema = Yup.object().shape({
   ),
   latestExperienceLetter: Yup.array()
     .of(Yup.string())
-    .min(1, "Atleast one image is required")
+    .min(1, " image is required")
     .required("please upload atleast one image"),
   latestRelievingLetter: Yup.array()
     .of(Yup.string())
-    .min(1, "Atleast one image is required")
+    .min(1, "image is required")
     .required("please upload atleast one image"),
   salarySlip: Yup.array()
     .of(Yup.string())
-    .min(1, "Atleast one image is required")
+    .min(1, " image is required")
     .required("please upload atleast one image"),
   uploadForm16: Yup.array()
     .of(Yup.string())
-    .min(1, "Atleast one image is required")
+    .min(1, " image is required")
     .required("please upload atleast one image"),
   passportPhoto: Yup.array()
     .of(Yup.string())
-    .min(1, "Atleast one image is required")
+    .min(1, " image is required")
     .required("please upload atleast one image"),
 });

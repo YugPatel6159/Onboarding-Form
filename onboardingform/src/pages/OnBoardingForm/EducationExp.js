@@ -15,6 +15,11 @@ import {
   Checkbox,
   Autocomplete,
 } from "@mui/material";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Picker } from "@mui/lab";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { Formik, useFormik } from "formik";
@@ -92,17 +97,18 @@ function EducationExp({
       reasonForJobChange: "",
     },
     validationSchema: educationValidationSchema,
+    // validate:{validateToDate},
     onSubmit: (values) => {
       if (values) {
         console.log(values, "values");
         formDataChange(values);
         setEducationData(values);
         educationDataChange(values);
-
         handleNext();
       }
     },
   });
+
   console.log(formik.values, "formik.values");
   const addEducationFields = () => {
     const newEducation = {
@@ -158,7 +164,7 @@ function EducationExp({
     }
   }, []);
   useEffect(() => {
-    setEducationData(formik.values);
+    if (formik.values) setEducationData(formik.values);
     // formik.setValues(documentData);
   }, [formik.values]);
   // const TotalExperience = ["0 ", "1 ", "2 ", "3 ", "4 ", "5 ", "10", "10+"];
@@ -246,7 +252,7 @@ function EducationExp({
                         formik.touched.education &&
                         formik.touched.education[index] &&
                         formik.touched.education[index].educationType && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.education[index].educationType}
                           </Typography>
                         )}
@@ -292,7 +298,7 @@ function EducationExp({
                         formik.touched.education &&
                         formik.touched.education[index] &&
                         formik.touched.education[index].instituteName && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.education[index].instituteName}
                           </Typography>
                         )}
@@ -331,7 +337,7 @@ function EducationExp({
                         formik.touched.education &&
                         formik.touched.education[index] &&
                         formik.touched.education[index].course && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.education[index].course}
                           </Typography>
                         )}
@@ -358,7 +364,7 @@ function EducationExp({
                         formik.touched.education &&
                         formik.touched.education[index] &&
                         formik.touched.education[index].cgpa && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.education[index].cgpa}
                           </Typography>
                         )
@@ -366,7 +372,7 @@ function EducationExp({
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    <TextField
+                    {/* <TextField
                       fullWidth
                       className={classes.textField}
                       // id={`item.cgpa`}
@@ -392,12 +398,39 @@ function EducationExp({
                         formik.touched.education &&
                         formik.touched.education[index] &&
                         formik.touched.education[index].passYear && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.education[index]?.passYear}
                           </Typography>
                         )
                       }
-                    />
+                    /> */}
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        className={classes.textField}
+                        name={`education[${index}].passYear`}
+                        label="Pass Year"
+                        value={ formik.values.education[index].passYear ? dayjs(formik.values.education[index].passYear): null}
+                        sx={{ marginTop: "10px", width: "100%" }}
+                        onChange={(date) => {
+                          formik.setFieldValue(
+                            `education[${index}].passYear`,
+                            date ? date.format("YYYY-MM-DD") : ""
+                          );
+                        }}
+                        // renderInput={(params) => <TextField {...params} />}
+                        disableFuture
+                      />
+                    </LocalizationProvider>
+                    {formik.errors.education &&
+                      formik.errors.education[index] &&
+                      formik.errors.education[index].passYear &&
+                      formik.touched.education &&
+                      formik.touched.education[index] &&
+                      formik.touched.education[index].passYear && (
+                        <Typography variant="caption" color="red">
+                          {formik.errors.education[index].passYear}
+                        </Typography>
+                      )}
                   </Grid>
                 </Grid>
                 <DeleteIcon
@@ -461,7 +494,7 @@ function EducationExp({
                   helperText={
                     formik.errors.totalExperience &&
                     formik.touched.totalExperience && (
-                      <Typography variant="caption" color="orange">
+                      <Typography variant="caption" color="red">
                         {formik.errors.totalExperience}
                       </Typography>
                     )
@@ -506,7 +539,7 @@ function EducationExp({
                             formik.touched.experience &&
                             formik.touched.experience[index] &&
                             formik.touched.experience[index].company && (
-                              <Typography variant="caption" color="orange">
+                              <Typography variant="caption" color="red">
                                 {formik.errors.experience[index].company}
                               </Typography>
                             )
@@ -536,7 +569,7 @@ function EducationExp({
                               formik.touched.experience &&
                               formik.touched.experience[index] &&
                               formik.touched.experience[index].designation && (
-                                <Typography variant="caption" color="orange">
+                                <Typography variant="caption" color="red">
                                   {formik.errors.experience[index].designation}
                                 </Typography>
                               )
@@ -565,7 +598,7 @@ function EducationExp({
                             formik.touched.experience &&
                             formik.touched.experience[index] &&
                             formik.touched.experience[index].technology && (
-                              <Typography variant="caption" color="orange">
+                              <Typography variant="caption" color="red">
                                 {formik.errors.experience[index].technology}
                               </Typography>
                             )
@@ -608,14 +641,14 @@ function EducationExp({
                         formik.touched.experience &&
                         formik.touched.experience[index] &&
                         formik.touched.experience[index].companyPresent && (
-                          <Typography variant="caption" color="orange">
+                          <Typography variant="caption" color="red">
                             {formik.errors.experience[index].companyPresent}
                           </Typography>
                         )}
                     </Grid>
                     <Grid container spacing={2}>
                       <Grid item xs={4}>
-                        <TextField
+                        {/* <TextField
                           className={classes.textField}
                           // id="fromDate"
                           type="month"
@@ -632,8 +665,8 @@ function EducationExp({
                           }}
                           onChange={formik.handleChange}
                           // onBlur={formik.handleBlur}
-                          value={formik.values.experience[index].fromDate}
                           // style={formik.values.totalExperience==0 ? {display:"none"} : {}}
+                          value={formik.values.experience[index].fromDate}
                           helperText={
                             formik.errors.experience &&
                             formik.errors.experience[index] &&
@@ -641,15 +674,54 @@ function EducationExp({
                             formik.touched.experience &&
                             formik.touched.experience[index] &&
                             formik.touched.experience[index].fromDate && (
-                              <Typography variant="caption" color="orange">
+                              <Typography variant="caption" color="red">
                                 {formik.errors.experience[index].fromDate}
                               </Typography>
                             )
                           }
-                        />
+                        /> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            className={classes.textField}
+                            name={`experience[${index}].fromDate`}
+                            label="From Date"
+                            variant="outlined"
+                            sx={{ marginTop: "10px", width: "100%" }}
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            views={["year", "month"]} // Specify the desired views
+                            inputFormat="YYYY-MM"
+                            mask="____-__"
+                            disableFuture
+                            value={
+                              formik.values.experience[index].fromDate
+                                ? dayjs(
+                                    formik.values.experience[index].fromDate
+                                  )
+                                : null
+                            }
+                            onChange={(date) => {
+                              formik.setFieldValue(
+                                `experience[${index}].fromDate`,
+                                date ? date.format("YYYY-MM") : "" // Format as desired string format
+                              );
+                            }}
+                          />
+                        </LocalizationProvider>
+                        {formik.errors.experience &&
+                          formik.errors.experience[index] &&
+                          formik.errors.experience[index].fromDate &&
+                          formik.touched.experience &&
+                          formik.touched.experience[index] &&
+                          formik.touched.experience[index].fromDate && (
+                            <Typography variant="caption" color="red">
+                              {formik.errors.experience[index].fromDate}
+                            </Typography>
+                          )}
                       </Grid>
                       <Grid item xs={4}>
-                        <TextField
+                        {/* <TextField
                           className={classes.textField}
                           // id="toDate"
                           type="date"
@@ -677,12 +749,54 @@ function EducationExp({
                             formik.touched.experience &&
                             formik.touched.experience[index] &&
                             formik.touched.experience[index].toDate && (
-                              <Typography variant="caption" color="orange">
+                              <Typography variant="caption" color="red">
                                 {formik.errors.experience[index].toDate}
                               </Typography>
                             )
                           }
-                        />
+                        /> */}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            className={classes.textField}
+                            name={`experience[${index}].toDate`}
+                            label="To Date"
+                            variant="outlined"
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            // validate={validateToDate}
+                            views={["year", "month"]} // Specify the desired views
+                            inputFormat="YYYY-MM"
+                            mask="____-__"
+                            disableFuture
+                            value={
+                              formik.values.experience[index].toDate
+                                ? dayjs(formik.values.experience[index].toDate)
+                                : null
+                            }
+                            sx={
+                              !formik.values.experience[index].companyPresent
+                                ? { marginTop: "10px", width: "100%" }
+                                : { display: "none" }
+                            }
+                            onChange={(date) => {
+                              formik.setFieldValue(
+                                `experience[${index}].toDate`,
+                                date ? date.format("YYYY-MM") : "" // Format as desired string format
+                              );
+                            }}
+                          />
+                        </LocalizationProvider>
+                        { formik.errors.experience &&
+                          formik.errors.experience[index] &&
+                          formik.errors.experience[index].toDate &&
+                          formik.touched.experience &&
+                          formik.touched.experience[index] &&
+                          formik.touched.experience[index].toDate && (
+                            <Typography variant="caption" color="red">
+                              {formik.errors.experience[index].toDate}
+                            </Typography>
+                          )}
                       </Grid>
                     </Grid>
                   </Box>
@@ -712,7 +826,7 @@ function EducationExp({
                 helperText={
                   formik.errors.reasonForJobChange &&
                   formik.touched.reasonForJobChange && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.reasonForJobChange}
                     </Typography>
                   )

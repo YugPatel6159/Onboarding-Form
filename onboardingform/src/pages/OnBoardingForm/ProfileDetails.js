@@ -119,6 +119,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                   height: "100px",
                   marginLeft: "auto",
                   marginRight: "auto",
+                  borderRadius: "100px",
                 }}
               />
             </IconButton>
@@ -148,7 +149,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
               sx={{ display: "none" }}
             />
             {formik.errors.profilePhoto && formik.touched.profilePhoto && (
-              <Typography variant="caption" color="orange">
+              <Typography variant="caption" color="red">
                 {formik.errors.profilePhoto}
               </Typography>
             )}
@@ -187,7 +188,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.firstName &&
                   formik.touched.firstName && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.firstName}
                     </Typography>
                   )
@@ -209,7 +210,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.middleName &&
                   formik.touched.middleName && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.middleName}
                     </Typography>
                   )
@@ -228,7 +229,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.lastName &&
                   formik.touched.lastName && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.lastName}
                     </Typography>
                   )
@@ -250,7 +251,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.phoneNumber &&
                   formik.touched.phoneNumber && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.phoneNumber}
                     </Typography>
                   )
@@ -275,7 +276,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.email &&
                   formik.touched.email && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.email}
                     </Typography>
                   )
@@ -331,7 +332,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 </Stack>
               </RadioGroup>
               {formik.errors.gender && formik.touched.gender && (
-                <Typography variant="caption" color="orange">
+                <Typography variant="caption" color="red">
                   {formik.errors.gender}
                 </Typography>
               )}
@@ -348,7 +349,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.altMobileNumber &&
                   formik.touched.altMobileNumber && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.altMobileNumber}
                     </Typography>
                   )
@@ -388,7 +389,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 </FormControl>
                 {formik.errors.maritialStatus &&
                   formik.touched.maritialStatus && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.maritialStatus}
                     </Typography>
                   )}
@@ -417,7 +418,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.dob &&
                   formik.touched.dob && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.dob}
                     </Typography>
                   )
@@ -450,7 +451,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                   </Select>
                 </FormControl>
                 {formik.errors.bloodGroup && formik.touched.bloodGroup && (
-                  <Typography variant="caption" color="orange">
+                  <Typography variant="caption" color="red">
                     {formik.errors.bloodGroup}
                   </Typography>
                 )}
@@ -469,7 +470,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.githubLink &&
                   formik.touched.githubLink && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.githubLink}
                     </Typography>
                   )
@@ -488,7 +489,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.linkedInLink &&
                   formik.touched.linkedInLink && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.linkedInLink}
                     </Typography>
                   )
@@ -531,7 +532,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.bankName &&
                   formik.touched.bankName && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.bankName}
                     </Typography>
                   )
@@ -553,7 +554,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.accountNumber &&
                   formik.touched.accountNumber && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.accountNumber}
                     </Typography>
                   )
@@ -571,7 +572,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.ifscCode &&
                   formik.touched.ifscCode && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.ifscCode}
                     </Typography>
                   )
@@ -592,7 +593,7 @@ function ProfileDetails({formDataChange,handleNext,profileDetailsData, profileDa
                 helperText={
                   formik.errors.branch &&
                   formik.touched.branch && (
-                    <Typography variant="caption" color="orange">
+                    <Typography variant="caption" color="red">
                       {formik.errors.branch}
                     </Typography>
                   )

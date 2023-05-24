@@ -13,13 +13,15 @@ export const educationValidationSchema = Yup.object().shape({
   totalExperience: Yup.string().required("Required"),
   experience: Yup.array().of(
     Yup.object().shape({
-      company: Yup.string(),
-      designation: Yup.string(),
-      technology: Yup.string(),
-      fromDate: Yup.string(),
-      toDate: Yup.string(),
+      company: Yup.string().required("Required"),
+      designation: Yup.string().required("Required"),
+      technology: Yup.string().required("Required"),
+      fromDate: Yup.date().required("Required"),
+      toDate: Yup.date()
+        .min(Yup.ref("fromDate"), "To date should be greater than from date")
+        .required("Required"),
       companyPresent: Yup.boolean(),
     })
-    ),
-    reasonForJobChange: Yup.string(),
+  ),
+  reasonForJobChange: Yup.string(),
 });
