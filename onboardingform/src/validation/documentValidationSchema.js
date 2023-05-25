@@ -1,10 +1,16 @@
 import * as Yup from "yup";
 
 export const documentValidationSchema = Yup.object().shape({
-  aadharNumber: Yup.number()
-    .required("Required")
-    .typeError("Invalid aadhar number"),
-  panNumber: Yup.string().required("Required"),
+  aadharNumber: Yup.string()
+    .matches(/^\d{12}$/, "Aadhaar card number is invalid.")
+    .required("Aadhaar card number is required"),
+
+  panNumber: Yup.string()
+    .matches(
+      /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/,
+      "PAN card number is invalid."
+    )
+    .required("PAN card number is required"),
   aadharCardImage: Yup.array()
     .of(Yup.string())
     .min(1, "Atleast one image is required")

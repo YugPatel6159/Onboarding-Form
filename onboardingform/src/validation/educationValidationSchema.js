@@ -10,16 +10,20 @@ export const educationValidationSchema = Yup.object().shape({
       passYear: Yup.string().required("Required"),
     })
   ),
-  totalExperience: Yup.string().required("Required"),
+  totalExperience: Yup.number().typeError("experience must be a number").required("Required"),
   experience: Yup.array().of(
     Yup.object().shape({
       company: Yup.string().required("Required"),
       designation: Yup.string().required("Required"),
       technology: Yup.string().required("Required"),
       fromDate: Yup.date().required("Required"),
-      toDate: Yup.date()
-        .min(Yup.ref("fromDate"), "To date should be greater than from date")
-        .required("Required"),
+      toDate: Yup.date().when("companyPresent", {
+        is: false,
+        then: ()=>Yup.date()
+          .min(Yup.ref("fromDate"), "To date should be greater than from date")
+          .required("Required"),
+        otherwise: ()=>Yup.date().notRequired(),
+      }),
       companyPresent: Yup.boolean(),
     })
   ),

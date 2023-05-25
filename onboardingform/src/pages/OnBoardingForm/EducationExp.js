@@ -17,18 +17,14 @@ import {
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Picker } from "@mui/lab";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { Formik, useFormik } from "formik";
-import * as Yup from "yup";
 import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { educationValidationSchema } from "../../validation/educationValidationSchema";
-// import { educationValidationSchema } from "../../validation/ProfileValidationSchema";
 
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -84,16 +80,6 @@ function EducationExp({
         },
       ],
       totalExperience: "",
-      experience: [
-        {
-          company: "",
-          designation: "",
-          technology: "",
-          fromDate: "",
-          toDate: "",
-          companyPresent: false,
-        },
-      ],
       reasonForJobChange: "",
     },
     validationSchema: educationValidationSchema,
@@ -109,7 +95,7 @@ function EducationExp({
     },
   });
 
-  console.log(formik.values, "formik.values");
+  // console.log(formik.values, "formik.values");
   const addEducationFields = () => {
     const newEducation = {
       educationType: "",
@@ -132,6 +118,27 @@ function EducationExp({
     }));
   };
 
+  const handleTotalExperienceChange=(event)=>{
+    const totalExperienceString = event.target.value;
+    // converting string to integer for checking condition
+    const totalExperience = parseInt(totalExperienceString);
+    formik.setFieldValue("totalExperience", totalExperienceString);
+    if (totalExperience > 0 && totalExperience <= 50) {
+      formik.setFieldValue("experience", [
+        {
+          company: "",
+          designation: "",
+          technology: "",
+          fromDate: "",
+          toDate: "",
+          reasonForJobChange: "",
+          companyPresent: false,
+        },
+      ]);
+    } else {
+      formik.setFieldValue("experience", []);
+    }
+  }
   const addExperienceFields = () => {
     const newExperience = {
       totalExperience: "",
@@ -157,16 +164,23 @@ function EducationExp({
     }));
   };
 
+    const handleBackChange = () => {
+      setEducationData(formik.values);
+      handleBack();
+    }
+
+  console.log(formik.values, "formik.values");
   useEffect(() => {
-    console.log(educationData);
+    // console.log(educationData);
     if (educationData != null) {
       formik.setValues(educationData);
     }
   }, []);
-  useEffect(() => {
-    if (formik.values) setEducationData(formik.values);
-    // formik.setValues(documentData);
-  }, [formik.values]);
+
+  // useEffect(() => {
+  //   if (formik.values) setEducationData(formik.values);
+  //   // formik.setValues(documentData);
+  // }, [formik.values]);
   // const TotalExperience = ["0 ", "1 ", "2 ", "3 ", "4 ", "5 ", "10", "10+"];
 
   return (
@@ -372,44 +386,16 @@ function EducationExp({
                     />
                   </Grid>
                   <Grid item xs={4}>
-                    {/* <TextField
-                      fullWidth
-                      className={classes.textField}
-                      // id={`item.cgpa`}
-                      name={`education[${index}].passYear`}
-                      variant="outlined"
-                      sx={{ marginTop: "10px", width: "100%" }}
-                      label="Date of Passing"
-                      type="date"
-                      inputProps={{
-                        max: new Date().toISOString().split("T")[0],
-                      }}
-                      // onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                      // value={formik.values.education[index].passYear || ""}
-                      value={formik.values.education[index].passYear}
-                      helperText={
-                        formik.errors.education &&
-                        formik.errors.education[index] &&
-                        formik.errors.education[index].passYear &&
-                        formik.touched.education &&
-                        formik.touched.education[index] &&
-                        formik.touched.education[index].passYear && (
-                          <Typography variant="caption" color="red">
-                            {formik.errors.education[index]?.passYear}
-                          </Typography>
-                        )
-                      }
-                    /> */}
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                       <DatePicker
                         className={classes.textField}
                         name={`education[${index}].passYear`}
                         label="Pass Year"
-                        value={ formik.values.education[index].passYear ? dayjs(formik.values.education[index].passYear): null}
+                        value={
+                          formik.values.education[index].passYear
+                            ? dayjs(formik.values.education[index].passYear)
+                            : null
+                        }
                         sx={{ marginTop: "10px", width: "100%" }}
                         onChange={(date) => {
                           formik.setFieldValue(
@@ -486,9 +472,7 @@ function EducationExp({
                   label="Total Experience"
                   value={formik.values.totalExperience}
                   // onChange={formik.handleChange}
-                  onChange={(event, newValue) => {
-                    formik.setFieldValue("totalExperience", event.target.value);
-                  }}
+                  onChange={handleTotalExperienceChange}
                   onBlur={formik.handleBlur}
                   sx={{ marginTop: "20px" }}
                   helperText={
@@ -503,8 +487,8 @@ function EducationExp({
               </Grid>
             </Grid>
           </Box>
+          <Box  sx={formik.values.totalExperience == 0 || isNaN(formik.values.totalExperience) ? { display: "none" } : {}}>
           <Box
-            sx={formik.values.totalExperience == 0 ? { display: "none" } : {}}
           >
             {formik.values.experience &&
               formik.values.experience.length > 0 &&
@@ -630,7 +614,21 @@ function EducationExp({
                             label="Mark if the company is present "
                             name={`experience[${index}].companyPresent`}
                             sx={{ marginTop: "10px", width: "100%" }}
-                            onChange={formik.handleChange}
+                            checked={
+                              formik.values.experience[index].companyPresent
+                            }
+                            onChange={(event) => {
+                              formik.setFieldValue(
+                                `experience[${index}].companyPresent`,
+                                event.target.checked
+                              );
+                              if (event.target.checked) {
+                                formik.setFieldValue(
+                                  `experience[${index}].toDate`,
+                                  ""
+                                );
+                              }
+                            }}
                             // style={formik.values.totalExperience==0 ? {display:"none"} : {}}
                           />
                         </FormGroup>
@@ -648,38 +646,6 @@ function EducationExp({
                     </Grid>
                     <Grid container spacing={2}>
                       <Grid item xs={4}>
-                        {/* <TextField
-                          className={classes.textField}
-                          // id="fromDate"
-                          type="month"
-                          // name="fromDate"
-                          name={`experience[${index}].fromDate`}
-                          label="From Date"
-                          variant="outlined"
-                          sx={{ marginTop: "10px", width: "100%" }}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          inputProps={{
-                            max: new Date().toISOString().split("T")[0],
-                          }}
-                          onChange={formik.handleChange}
-                          // onBlur={formik.handleBlur}
-                          // style={formik.values.totalExperience==0 ? {display:"none"} : {}}
-                          value={formik.values.experience[index].fromDate}
-                          helperText={
-                            formik.errors.experience &&
-                            formik.errors.experience[index] &&
-                            formik.errors.experience[index].fromDate &&
-                            formik.touched.experience &&
-                            formik.touched.experience[index] &&
-                            formik.touched.experience[index].fromDate && (
-                              <Typography variant="caption" color="red">
-                                {formik.errors.experience[index].fromDate}
-                              </Typography>
-                            )
-                          }
-                        /> */}
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             className={classes.textField}
@@ -720,41 +686,15 @@ function EducationExp({
                             </Typography>
                           )}
                       </Grid>
-                      <Grid item xs={4}>
-                        {/* <TextField
-                          className={classes.textField}
-                          // id="toDate"
-                          type="date"
-                          // name="toDate"
-                          name={`experience[${index}].toDate`}
-                          label="To Date"
-                          variant="outlined"
-                          style={
-                            !formik.values.experience[index].companyPresent
-                              ? {}
-                              : { display: "none" }
-                          }
-                          sx={{ marginTop: "10px" }}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          onChange={formik.handleChange}
-                          // onBlur={formik.handleBlur}
-
-                          value={formik.values.experience[index].toDate}
-                          helperText={
-                            formik.errors.experience &&
-                            formik.errors.experience[index] &&
-                            formik.errors.experience[index].toDate &&
-                            formik.touched.experience &&
-                            formik.touched.experience[index] &&
-                            formik.touched.experience[index].toDate && (
-                              <Typography variant="caption" color="red">
-                                {formik.errors.experience[index].toDate}
-                              </Typography>
-                            )
-                          }
-                        /> */}
+                      <Grid
+                        item
+                        xs={4}
+                        sx={
+                          !formik.values.experience[index].companyPresent
+                            ? { marginTop: "10px", width: "100%" }
+                            : { display: "none" }
+                        }
+                      >
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             className={classes.textField}
@@ -764,7 +704,6 @@ function EducationExp({
                             InputLabelProps={{
                               shrink: true,
                             }}
-                            // validate={validateToDate}
                             views={["year", "month"]} // Specify the desired views
                             inputFormat="YYYY-MM"
                             mask="____-__"
@@ -774,11 +713,6 @@ function EducationExp({
                                 ? dayjs(formik.values.experience[index].toDate)
                                 : null
                             }
-                            sx={
-                              !formik.values.experience[index].companyPresent
-                                ? { marginTop: "10px", width: "100%" }
-                                : { display: "none" }
-                            }
                             onChange={(date) => {
                               formik.setFieldValue(
                                 `experience[${index}].toDate`,
@@ -787,7 +721,7 @@ function EducationExp({
                             }}
                           />
                         </LocalizationProvider>
-                        { formik.errors.experience &&
+                        {formik.errors.experience &&
                           formik.errors.experience[index] &&
                           formik.errors.experience[index].toDate &&
                           formik.touched.experience &&
@@ -803,7 +737,6 @@ function EducationExp({
                 </Box>
               ))}
           </Box>
-        </Box>
         <Box sx={{ marginTop: "10px" }}>
           <Grid container spacing={2}>
             <Grid item xs={4}>
@@ -835,12 +768,15 @@ function EducationExp({
             </Grid>
           </Grid>
         </Box>
+        </Box>
+        </Box>
         <Stack
           direction={"row"}
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
           spacing={2}
+          marginTop={"20px"}
           // sx={{ display: "flex", justifyContent: "end" }}
         >
           <Button
@@ -849,7 +785,7 @@ function EducationExp({
               backgroundColor: "orange",
               color: "white",
             }}
-            onClick={handleBack}
+            onClick={handleBackChange}
           >
             back
           </Button>

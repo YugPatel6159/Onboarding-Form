@@ -155,10 +155,10 @@ const DocumentForm = ({
     },
   });
 
-  useEffect(() => {
-    setDocumentData(formik.values);
-    // formik.setValues(documentData);
-  }, [formik.values]);
+  // useEffect(() => {
+  //   setDocumentData(formik.values);
+  //   // formik.setValues(documentData);
+  // }, [formik.values]);
 
   useEffect(() => {
     if (documentData) {
@@ -237,7 +237,10 @@ const DocumentForm = ({
       ],
     }));
   };
-
+  const handleBackChange = () => {
+    setDocumentData(formik.values);
+    handleBack();
+  }
   const setExperienceLetter = (file) => {
     formik.setFieldValue("latestExperienceLetter", [...file]);
   };
@@ -334,7 +337,7 @@ const DocumentForm = ({
                 value={formik.values.aadharNumber}
                 helperText={
                   formik.errors.aadharNumber &&
-                  formik.touched.aadharNumber && (
+                  formik.submitCount>0 && (
                     <Typography variant="caption" color="red">
                       {formik.errors.aadharNumber}
                     </Typography>
@@ -356,12 +359,14 @@ const DocumentForm = ({
                 label="Pan Number"
                 variant="outlined"
                 sx={{ marginTop: "10px" }}
-                onChange={formik.handleChange}
+                onChange={(event)=>{
+                  formik.setFieldValue('panNumber', (event.target.value).toUpperCase())
+                }}
                 onBlur={formik.handleBlur}
                 value={formik.values.panNumber}
                 helperText={
                   formik.errors.panNumber &&
-                  formik.touched.panNumber && (
+                  formik.submitCount>0 && (
                     <Typography variant="caption" color="red">
                       {formik.errors.panNumber}
                     </Typography>
@@ -394,6 +399,13 @@ const DocumentForm = ({
                   Upload Aadhar
                 </Button>
               </label>
+              {
+                formik.errors.aadharCardImage && formik.submitCount>0 && (
+                  <Typography variant="caption" color="red">
+                    {formik.errors.aadharCardImage}
+                  </Typography>
+                )
+              }
             </Grid>
             <Grid item xs={2}></Grid>
             <Grid item xs={5}>
@@ -417,6 +429,13 @@ const DocumentForm = ({
                   Upload Pan
                 </Button>
               </label>
+              {
+                formik.errors.panCardImages && formik.submitCount>0 && (
+                  <Typography variant="caption" color="red">
+                    {formik.errors.panCardImages}
+                  </Typography>
+                )
+              }
             </Grid>
           </Grid>
           <Box>
@@ -1292,7 +1311,7 @@ const DocumentForm = ({
               backgroundColor: "orange",
               color: "white",
             }}
-            onClick={handleBack}
+            onClick={handleBackChange}
           >
             back
           </Button>
